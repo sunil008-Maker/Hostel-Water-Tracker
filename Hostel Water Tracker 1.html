@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>💧 HydroHostel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:'DM Sans',sans-serif;min-height:100vh}
+
+header{background:#0a1628;border-bottom:1px solid #21262d;padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99}
+header h1{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;
+  background:linear-gradient(90deg,#1a6cff,#00c4b4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdate{font-size:.82rem;color:#8b949e;text-align:right}
+
+nav{display:flex;overflow-x:auto;background:#0d1117;border-bottom:1px solid #21262d;padding:0 8px}
+.ntab{flex-shrink:0;padding:12px 16px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;
+  border:none;background:transparent;color:#8b949e;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.ntab.on{color:#1a6cff;border-bottom-color:#1a6cff}
+
+.pg{display:none;padding:18px;max-width:660px;margin:0 auto}
+.pg.on{display:block}
+
+/* TODAY CARD */
+.tcard{border-radius:14px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#1a2744,#0a2038);border:1px solid #1a6cff44}
+.tcard.cov{background:linear-gradient(135deg,#1a2a0a,#0a1800);border-color:#3fb95044}
+.tcard-emoji{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:3.5rem;opacity:.1;pointer-events:none}
+.tlabel{font-size:.68rem;color:#00c4b4;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:4px}
+.tname{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:2px}
+.tinfo{font-size:.8rem;color:#8b949e;margin-bottom:6px}
+.tnote{font-size:.8rem;color:#f0883e;margin-bottom:12px;font-weight:500}
+.tbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 15px;border-radius:8px;
+  font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;border:none;cursor:pointer;transition:all .15s}
+.btn:active{transform:scale(.96)}
+.bg{background:#3fb950;color:#fff} .bg:hover{background:#2ea043}
+.bg.dn{background:#0d2a0d;color:#3fb950;border:1px solid #3fb950}
+.bs{background:#4285f4;color:#fff} .bs:hover{background:#2a70d6}
+.bb{background:#1a6cff;color:#fff} .bb:hover{background:#1450cc}
+.bo{background:#f0883e;color:#fff} .bo:hover{background:#d06828}
+.br{background:transparent;color:#f85149;border:1px solid #f8514944} .br:hover{background:#2a0a0a}
+.bm{background:#21262d;color:#e6edf3} .bm:hover{background:#2d333b}
+.sm{padding:6px 11px;font-size:.74rem} .xs{padding:4px 8px;font-size:.7rem}
+
+/* SECTION TITLE */
+.stitle{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;color:#8b949e;
+  text-transform:uppercase;letter-spacing:2px;margin:16px 0 9px}
+
+/* SCHEDULE LIST */
+.slist{display:flex;flex-direction:column;gap:6px}
+.srow{background:#161b22;border:1px solid #21262d;border-radius:9px;padding:11px 13px;
+  display:flex;align-items:center;gap:11px}
+.srow.ht{border-color:#1a6cff55;background:#1a2744}
+.srow.hc{border-color:#f0883e44;background:#2a1a0a}
+.av{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;flex-shrink:0}
+.ri{flex:1;min-width:0}
+.rn{font-weight:500;font-size:.88rem}
+.rd{font-size:.72rem;color:#8b949e;margin-top:1px}
+.bx{font-size:.65rem;padding:2px 8px;border-radius:20px;font-weight:700;white-space:nowrap;font-family:'Syne',sans-serif}
+.bbl{background:#1a6cff22;color:#6699ff;border:1px solid #1a6cff44}
+.bgr{background:#3fb95022;color:#3fb950;border:1px solid #3fb95044}
+.bor{background:#f0883e22;color:#f0883e;border:1px solid #f0883e44}
+.bgy{background:#21262d;color:#8b949e}
+
+/* MEMBER CARDS */
+.mc{background:#161b22;border:1px solid #21262d;border-radius:11px;padding:13px 15px;margin-bottom:8px}
+.mct{display:flex;align-items:center;gap:11px}
+.mav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;flex-shrink:0}
+.mif{flex:1;min-width:0}
+.mname{background:transparent;border:none;color:#e6edf3;font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:500;width:100%;outline:none;border-bottom:1px solid transparent;
+  transition:border-color .2s;padding:2px 0}
+.mname:focus{border-bottom-color:#1a6cff}
+.mmeta{font-size:.72rem;color:#8b949e;margin-top:2px;display:flex;gap:7px;flex-wrap:wrap}
+.ltag{color:#f0883e;font-weight:500}
+.dc{display:flex;align-items:center;gap:5px}
+.db{width:24px;height:24px;border-radius:6px;background:#21262d;border:none;color:#e6edf3;
+  cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.db:hover{background:#1a6cff}
+.dv{font-family:'Syne',sans-serif;font-weight:700;min-width:18px;text-align:center}
+
+/* PHONE */
+.prow{display:flex;align-items:center;gap:8px;margin-top:9px}
+.prow label{font-size:.72rem;color:#8b949e;white-space:nowrap}
+.pinp{flex:1;background:#0d1117;border:1px solid #21262d;border-radius:7px;
+  color:#e6edf3;font-family:'DM Sans',sans-serif;font-size:.83rem;padding:7px 10px;outline:none}
+.pinp:focus{border-color:#4285f4}
+.phint{font-size:.68rem;color:#8b949e;margin-top:3px}
+
+/* LEAVE */
+.lp{margin-top:10px;background:#0d1117;border-radius:8px;border:1px solid #21262d;padding:11px}
+.lp h4{font-size:.75rem;color:#f0883e;font-family:'Syne',sans-serif;font-weight:700;margin-bottom:8px}
+.lrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.lrow label{font-size:.72rem;color:#8b949e}
+.dinp{background:#161b22;border:1px solid #21262d;color:#e6edf3;border-radius:6px;
+  padding:6px 9px;font-family:'DM Sans',sans-serif;font-size:.76rem;outline:none}
+.dinp:focus{border-color:#f0883e}
+.lentry{display:flex;align-items:center;justify-content:space-between;
+  background:#f0883e0f;border:1px solid #f0883e33;border-radius:6px;padding:6px 10px;
+  font-size:.74rem;margin-bottom:4px}
+.lentry span{color:#f0883e}
+.nolv{font-size:.72rem;color:#8b949e;margin-bottom:7px}
+
+/* ADD BOX */
+.addbox{background:#161b22;border:2px dashed #21262d;border-radius:11px;padding:13px;
+  margin-top:9px;display:none;gap:7px;align-items:center}
+.addbox.on{display:flex}
+.ainp{flex:1;background:#0d1117;border:1px solid #21262d;border-radius:7px;
+  padding:8px 11px;color:#e6edf3;font-family:'DM Sans',sans-serif;font-size:.86rem;outline:none}
+.ainp:focus{border-color:#1a6cff}
+
+/* SMS TAB */
+.smsbox{background:#0a1628;border:1px solid #4285f433;border-radius:13px;padding:16px;margin-bottom:16px}
+.smsbox h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:4px}
+.smsbox p{font-size:.78rem;color:#8b949e;margin-bottom:13px}
+.smsgrid{display:flex;flex-direction:column;gap:6px}
+.smsrow{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:10px 13px;
+  display:flex;align-items:center;gap:10px}
+.smsi{flex:1;min-width:0}
+.smsn{font-weight:500;font-size:.86rem}
+.smsp{font-size:.72rem;color:#8b949e}
+.noph{font-size:.72rem;color:#f85149}
+
+/* HISTORY */
+.hitem{background:#161b22;border:1px solid #21262d;border-radius:9px;padding:11px 13px;
+  display:flex;align-items:center;gap:11px;margin-bottom:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:#3fb950}
+
+.empty{text-align:center;padding:32px 20px;color:#8b949e}
+.ei{font-size:2.5rem;margin-bottom:9px}
+
+.tip{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:13px;
+  font-size:.78rem;color:#8b949e;margin-top:8px}
+
+/* AVATAR COLORS */
+.c0{background:#1a6cff33;color:#6699ff}
+.c1{background:#00c4b433;color:#00ddc8}
+.c2{background:#e3b34133;color:#e8cc80}
+.c3{background:#f8514933;color:#f87171}
+.c4{background:#3fb95033;color:#3fb950}
+.c5{background:#bc8cff33;color:#bc8cff}
+
+@media(max-width:480px){
+  header{padding:12px 14px}
+  .pg{padding:13px}
+  .tname{font-size:1.5rem}
+  .ntab{padding:11px 12px;font-size:.75rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💧 HydroHostel</h1>
+  <div class="hdate" id="hdrDate"></div>
+</header>
+
+<nav>
+  <button class="ntab on" id="tab-today" onclick="showTab('today')">🏠 Today</button>
+  <button class="ntab" id="tab-sms" onclick="showTab('sms')">💬 Send SMS</button>
+  <button class="ntab" id="tab-schedule" onclick="showTab('schedule')">📅 Schedule</button>
+  <button class="ntab" id="tab-members" onclick="showTab('members')">👥 Members</button>
+  <button class="ntab" id="tab-history" onclick="showTab('history')">📋 History</button>
+</nav>
+
+<!-- TODAY -->
+<div class="pg on" id="pg-today">
+  <div class="tcard" id="tcard">
+    <div class="tcard-emoji" id="temoji">💧</div>
+    <div class="tlabel" id="tlabel">Today's Water Duty</div>
+    <div class="tname" id="tname">—</div>
+    <div class="tinfo" id="tinfo"></div>
+    <div class="tnote" id="tnote" style="display:none"></div>
+    <div class="tbtns" id="tbtns"></div>
+  </div>
+  <div class="stitle">Upcoming — Next 7 Days</div>
+  <div class="slist" id="upcoming"></div>
+</div>
+
+<!-- SMS -->
+<div class="pg" id="pg-sms">
+  <div class="smsbox">
+    <h3>💬 Send SMS via Google Messages</h3>
+    <p>Tap a member's SMS button — Google Messages opens with the reminder already typed. Just tap Send!</p>
+    <div class="smsgrid" id="smsgrid"></div>
+  </div>
+  <div class="tip">📌 <strong style="color:#e6edf3">Tip:</strong> Add phone numbers in the Members tab to enable SMS sending.</div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="pg" id="pg-schedule">
+  <div class="stitle">Full Rotation — Next 60 Days</div>
+  <div class="slist" id="fullsched"></div>
+</div>
+
+<!-- MEMBERS -->
+<div class="pg" id="pg-members">
+  <div class="stitle">Manage Members</div>
+  <p style="font-size:.78rem;color:#8b949e;margin-bottom:12px">
+    Tap name to edit &nbsp;·&nbsp; ＋/− sets duty days &nbsp;·&nbsp; Add phone for SMS &nbsp;·&nbsp; Set leave dates
+  </p>
+  <div id="mgrid"></div>
+  <div class="addbox" id="addbox">
+    <input class="ainp" id="newname" placeholder="Enter member name…" maxlength="24"
+      onkeydown="if(event.key==='Enter')confirmAdd()"/>
+    <button class="btn bb sm" onclick="confirmAdd()">Add</button>
+    <button class="btn bm sm" onclick="cancelAdd()">Cancel</button>
+  </div>
+  <div style="margin-top:13px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn bb" id="addbtn" onclick="showAdd()">+ Add Member</button>
+    <button class="btn bm" onclick="rebuildAndRender()">🔄 Rebuild Schedule</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="pg" id="pg-history">
+  <div class="stitle">Collection History</div>
+  <div id="hlist"></div>
+</div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────
+var COLORS = ['c0','c1','c2','c3','c4','c5'];
+var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── STORAGE ───────────────────────────────────────────
+function load(k, d) {
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e) { return d; }
+}
+function save(k, v) {
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
+}
+
+// ── STATE ─────────────────────────────────────────────
+var members  = load('hw4_members', [
+  {id:1,name:'Member 1',phone:'',days:1,leaves:[]},
+  {id:2,name:'Member 2',phone:'',days:1,leaves:[]},
+  {id:3,name:'Member 3',phone:'',days:1,leaves:[]},
+  {id:4,name:'Member 4',phone:'',days:1,leaves:[]},
+  {id:5,name:'Member 5',phone:'',days:1,leaves:[]},
+  {id:6,name:'Member 6',phone:'',days:1,leaves:[]},
+]);
+// Fix missing fields
+for (var i = 0; i < members.length; i++) {
+  if (!members[i].leaves) members[i].leaves = [];
+  if (!members[i].phone)  members[i].phone  = '';
+  if (!members[i].days)   members[i].days   = 1;
+}
+
+var schedule = load('hw4_schedule', []);
+var history  = load('hw4_history',  []);
+var nextId   = load('hw4_nid', 7);
+
+// ── DATE HELPERS ──────────────────────────────────────
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+
+function fmtDate(s) {
+  var p = s.split('-');
+  var dt = new Date(+p[0], +p[1]-1, +p[2]);
+  return DAYS[dt.getDay()] + ', ' + (+p[2]) + ' ' + MONTHS[+p[1]-1];
+}
+
+function addDays(str, n) {
+  var d = new Date(str);
+  d.setDate(d.getDate() + n);
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+
+function isOnLeave(m, date) {
+  var lv = m.leaves || [];
+  for (var i = 0; i < lv.length; i++) {
+    if (date >= lv[i].from && date <= lv[i].to) return true;
+  }
+  return false;
+}
+
+function memberById(id) {
+  for (var i = 0; i < members.length; i++) {
+    if (members[i].id === id) return members[i];
+  }
+  return null;
+}
+
+function colorFor(id) { return COLORS[(id - 1) % COLORS.length]; }
+
+function initials(name) {
+  var parts = name.trim().split(' ');
+  var s = '';
+  for (var i = 0; i < parts.length && s.length < 2; i++) {
+    if (parts[i]) s += parts[i][0].toUpperCase();
+  }
+  return s || '?';
+}
+
+// ── SCHEDULE BUILDER ──────────────────────────────────
+function buildSchedule() {
+  if (!members.length) { schedule = []; save('hw4_schedule', schedule); return; }
+
+  var today = todayStr();
+  // Keep only past entries
+  var kept = [];
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date < today) kept.push(schedule[i]);
+  }
+  schedule = kept;
+
+  // Find starting member index
+  var idx = 0;
+  var past = [];
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date < today) past.push(schedule[i]);
+  }
+  if (past.length) {
+    var lastMid = past[past.length-1].memberId;
+    for (var i = 0; i < members.length; i++) {
+      if (members[i].id === lastMid) { idx = (i + 1) % members.length; break; }
+    }
+  }
+
+  var cursor = today;
+  var safety = 0;
+
+  function futureCount() {
+    var c = 0;
+    for (var i = 0; i < schedule.length; i++) {
+      if (schedule[i].date >= today) c++;
+    }
+    return c;
+  }
+
+  function hasDate(date) {
+    for (var i = 0; i < schedule.length; i++) {
+      if (schedule[i].date === date) return true;
+    }
+    return false;
+  }
+
+  while (futureCount() < 60 && safety < 700) {
+    safety++;
+    var mem = members[idx % members.length];
+    var days = mem.days || 1;
+
+    // Check if all days of this member's turn are on leave
+    var allLeave = true;
+    for (var d = 0; d < days; d++) {
+      if (!isOnLeave(mem, addDays(cursor, d))) { allLeave = false; break; }
+    }
+
+    if (allLeave) {
+      idx = (idx + 1) % members.length;
+      // Safety: if ALL members on leave on this cursor date, force and advance
+      var allOut = true;
+      for (var j = 0; j < members.length; j++) {
+        if (!isOnLeave(members[j], cursor)) { allOut = false; break; }
+      }
+      if (allOut) {
+        if (!hasDate(cursor)) schedule.push({date:cursor, memberId:mem.id, collected:false});
+        cursor = addDays(cursor, 1);
+        idx = (idx + 1) % members.length;
+      }
+      continue;
+    }
+
+    // Assign each day
+    for (var d = 0; d < days; d++) {
+      var date = addDays(cursor, d);
+      if (hasDate(date)) continue;
+      if (isOnLeave(mem, date)) {
+        // Find cover
+        var ci = (idx + 1) % members.length;
+        var cover = null;
+        for (var t = 0; t < members.length; t++) {
+          var cand = members[ci % members.length];
+          if (!isOnLeave(cand, date)) { cover = cand; break; }
+          ci = (ci + 1) % members.length;
+        }
+        schedule.push({date:date, memberId: cover ? cover.id : mem.id, collected:false, coveredFor:mem.id});
+      } else {
+        schedule.push({date:date, memberId:mem.id, collected:false});
+      }
+    }
+    cursor = addDays(cursor, days);
+    idx = (idx + 1) % members.length;
+  }
+
+  // Sort
+  schedule.sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+  save('hw4_schedule', schedule);
+}
+
+function rebuildAndRender() {
+  buildSchedule();
+  renderAll();
+}
+
+function ensureSchedule() {
+  var today = todayStr();
+  var fc = 0;
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date >= today) fc++;
+  }
+  if (fc < 20) buildSchedule();
+}
+
+function getEntryForDate(date) {
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date === date) return schedule[i];
+  }
+  return null;
+}
+
+// ── MARK COLLECTED ────────────────────────────────────
+function markCollected() {
+  var today = todayStr();
+  var entry = getEntryForDate(today);
+  if (!entry) return;
+  entry.collected = !entry.collected;
+  var m = memberById(entry.memberId);
+  if (entry.collected) {
+    history.unshift({
+      date: today,
+      memberName: m ? m.name : 'Unknown',
+      memberId: entry.memberId,
+      at: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+    });
+  } else {
+    var nh = [];
+    for (var i = 0; i < history.length; i++) {
+      if (history[i].date !== today) nh.push(history[i]);
+    }
+    history = nh;
+  }
+  save('hw4_schedule', schedule);
+  save('hw4_history', history);
+  renderAll();
+}
+
+// ── SMS ───────────────────────────────────────────────
+function buildMsg(memberName, date, coveredFor) {
+  var msg = '💧 Water Reminder - ' + fmtDate(date) + '\n\n';
+  msg += 'Hi ' + memberName + ', it\'s your turn to collect water today!\n';
+  msg += 'Please fill the tank before evening.';
+  if (coveredFor) {
+    var orig = memberById(coveredFor);
+    if (orig) msg += '\n(Covering for ' + orig.name + ' who is on leave)';
+  }
+  msg += '\n\nThanks!\n- HydroHostel';
+  return msg;
+}
+
+function sendSMS(phone, memberName, date, coveredFor) {
+  var msg = buildMsg(memberName, date, coveredFor);
+  var clean = phone.replace(/\s+/g, '');
+  var encoded = encodeURIComponent(msg);
+  window.location.href = 'sms:' + clean + '?body=' + encoded;
+}
+
+function sendSMSToday(memberId) {
+  var today = todayStr();
+  var m = memberById(memberId);
+  if (!m) return;
+  if (!m.phone || !m.phone.trim()) {
+    alert('No phone number for ' + m.name + '.\nPlease add it in the Members tab.');
+    return;
+  }
+  var entry = getEntryForDate(today);
+  var cf = (entry && entry.coveredFor && entry.memberId === memberId) ? entry.coveredFor : null;
+  sendSMS(m.phone, m.name, today, cf);
+}
+
+function sendSMSMember(memberId) {
+  var today = todayStr();
+  var m = memberById(memberId);
+  if (!m) return;
+  if (!m.phone || !m.phone.trim()) {
+    alert('No phone number for ' + m.name + '.\nPlease add it in the Members tab.');
+    return;
+  }
+  // Find next duty
+  var next = null;
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date >= today && schedule[i].memberId === memberId) { next = schedule[i]; break; }
+  }
+  var date = next ? next.date : today;
+  var cf = next && next.coveredFor ? next.coveredFor : null;
+  sendSMS(m.phone, m.name, date, cf);
+}
+
+// ── MEMBER CRUD ───────────────────────────────────────
+function updateName(id, val) {
+  var m = memberById(id);
+  if (!m) return;
+  var v = val.trim();
+  if (v) m.name = v;
+  save('hw4_members', members);
+}
+
+function updatePhone(id, val) {
+  var m = memberById(id);
+  if (!m) return;
+  m.phone = val.trim();
+  save('hw4_members', members);
+}
+
+function changeDays(id, delta) {
+  var m = memberById(id);
+  if (!m) return;
+  m.days = Math.max(1, Math.min(7, (m.days || 1) + delta));
+  save('hw4_members', members);
+  renderMembers();
+}
+
+function removeMember(id) {
+  if (!confirm('Remove this member?')) return;
+  var nm = [];
+  for (var i = 0; i < members.length; i++) {
+    if (members[i].id !== id) nm.push(members[i]);
+  }
+  members = nm;
+  save('hw4_members', members);
+  buildSchedule();
+  renderAll();
+}
+
+// ── LEAVE ─────────────────────────────────────────────
+function addLeave(id) {
+  var from = document.getElementById('lf' + id).value;
+  var to   = document.getElementById('lt' + id).value;
+  if (!from || !to) { alert('Please select both From and To dates.'); return; }
+  if (from > to)    { alert('"From" date must be before "To" date.'); return; }
+  var m = memberById(id);
+  if (!m) return;
+  m.leaves.push({from: from, to: to});
+  save('hw4_members', members);
+  buildSchedule();
+  renderAll();
+}
+
+function removeLeave(id, idx) {
+  var m = memberById(id);
+  if (!m) return;
+  m.leaves.splice(idx, 1);
+  save('hw4_members', members);
+  buildSchedule();
+  renderAll();
+}
+
+function showAdd() {
+  document.getElementById('addbox').classList.add('on');
+  document.getElementById('addbtn').style.display = 'none';
+  document.getElementById('newname').focus();
+}
+
+function cancelAdd() {
+  document.getElementById('addbox').classList.remove('on');
+  document.getElementById('addbtn').style.display = '';
+  document.getElementById('newname').value = '';
+}
+
+function confirmAdd() {
+  var name = document.getElementById('newname').value.trim();
+  if (!name) return;
+  members.push({id: nextId, name: name, phone: '', days: 1, leaves: []});
+  nextId++;
+  save('hw4_nid', nextId);
+  save('hw4_members', members);
+  cancelAdd();
+  buildSchedule();
+  renderAll();
+}
+
+// ── TABS ──────────────────────────────────────────────
+function showTab(name) {
+  var pages = ['today','sms','schedule','members','history'];
+  for (var i = 0; i < pages.length; i++) {
+    var pg  = document.getElementById('pg-' + pages[i]);
+    var tab = document.getElementById('tab-' + pages[i]);
+    if (pg)  pg.classList.remove('on');
+    if (tab) tab.classList.remove('on');
+  }
+  var selPg  = document.getElementById('pg-' + name);
+  var selTab = document.getElementById('tab-' + name);
+  if (selPg)  selPg.classList.add('on');
+  if (selTab) selTab.classList.add('on');
+}
+
+// ── RENDER ────────────────────────────────────────────
+function renderAll() {
+  renderToday();
+  renderSMS();
+  renderSchedule();
+  renderMembers();
+  renderHistory();
+}
+
+function makeSchedRow(entry, isToday) {
+  var m = memberById(entry.memberId);
+  if (!m) return '';
+  var isCov = !!entry.coveredFor;
+  var cls = isToday ? 'srow ht' : (isCov ? 'srow hc' : 'srow');
+  var badge = '';
+  if (isToday)         badge = '<span class="bx bbl">Today</span>';
+  else if (entry.collected) badge = '<span class="bx bgr">✓ Done</span>';
+  else if (isCov)      badge = '<span class="bx bor">Leave Sub</span>';
+  else                 badge = '<span class="bx bgy">Upcoming</span>';
+
+  return '<div class="' + cls + '">' +
+    '<div class="av ' + colorFor(m.id) + '">' + initials(m.name) + '</div>' +
+    '<div class="ri">' +
+      '<div class="rn">' + m.name + (isCov ? ' <span style="font-size:.68rem;color:#f0883e">(covering)</span>' : '') + '</div>' +
+      '<div class="rd">' + fmtDate(entry.date) + '</div>' +
+    '</div>' + badge +
+  '</div>';
+}
+
+function renderToday() {
+  var today = todayStr();
+  var entry = getEntryForDate(today);
+  var m = entry ? memberById(entry.memberId) : null;
+  var isCov = !!(entry && entry.coveredFor);
+  var orig = isCov ? memberById(entry.coveredFor) : null;
+
+  if (!m) {
+    document.getElementById('tname').textContent = 'No Schedule';
+    document.getElementById('tinfo').textContent = 'Go to Members → Rebuild Schedule';
+    document.getElementById('tnote').style.display = 'none';
+    document.getElementById('tbtns').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('tname').textContent = m.name;
+  document.getElementById('tinfo').textContent = fmtDate(today) + ' · ' + m.days + ' day' + (m.days > 1 ? 's' : '') + ' rotation';
+
+  if (isCov && orig) {
+    document.getElementById('tcard').className = 'tcard cov';
+    document.getElementById('temoji').textContent = '🔄';
+    document.getElementById('tlabel').textContent = 'Covering — Leave Replacement';
+    var n = document.getElementById('tnote');
+    n.style.display = 'block';
+    n.textContent = '🏖️ ' + orig.name + ' is on leave — ' + m.name + ' is covering today.';
+  } else {
+    document.getElementById('tcard').className = 'tcard';
+    document.getElementById('temoji').textContent = '💧';
+    document.getElementById('tlabel').textContent = "Today's Water Duty";
+    document.getElementById('tnote').style.display = 'none';
+  }
+
+  var done = !!(entry && entry.collected);
+  var hasPh = !!(m.phone && m.phone.trim());
+  document.getElementById('tbtns').innerHTML =
+    '<button class="btn ' + (done ? 'bg dn' : 'bg') + '" onclick="markCollected()">' +
+      (done ? '✔ Collected!' : '✅ Mark Collected') +
+    '</button>' +
+    '<button class="btn bs" onclick="sendSMSToday(' + m.id + ')">' +
+      '💬 Send SMS' + (hasPh ? '' : ' ⚠️') +
+    '</button>';
+
+  var upcoming = [];
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date >= today) upcoming.push(schedule[i]);
+    if (upcoming.length >= 7) break;
+  }
+  var html = '';
+  for (var i = 0; i < upcoming.length; i++) {
+    html += makeSchedRow(upcoming[i], upcoming[i].date === today);
+  }
+  document.getElementById('upcoming').innerHTML = html;
+}
+
+function renderSMS() {
+  var today = todayStr();
+  var html = '';
+  for (var i = 0; i < members.length; i++) {
+    var m = members[i];
+    var hasPh = !!(m.phone && m.phone.trim());
+    var next = null;
+    for (var j = 0; j < schedule.length; j++) {
+      if (schedule[j].date >= today && schedule[j].memberId === m.id) { next = schedule[j]; break; }
+    }
+    html += '<div class="smsrow">' +
+      '<div class="av ' + colorFor(m.id) + '">' + initials(m.name) + '</div>' +
+      '<div class="smsi">' +
+        '<div class="smsn">' + m.name + '</div>' +
+        (hasPh
+          ? '<div class="smsp">📱 ' + m.phone + ' · Next: ' + (next ? fmtDate(next.date) : '—') + '</div>'
+          : '<div class="noph">⚠️ No phone — add in Members tab</div>') +
+      '</div>' +
+      '<button class="btn bs sm" onclick="sendSMSMember(' + m.id + ')" ' +
+        (hasPh ? '' : 'disabled style="opacity:.4;cursor:not-allowed"') + '>💬 SMS</button>' +
+    '</div>';
+  }
+  document.getElementById('smsgrid').innerHTML = html;
+}
+
+function renderSchedule() {
+  var today = todayStr();
+  var items = [];
+  for (var i = 0; i < schedule.length; i++) {
+    if (schedule[i].date >= today) items.push(schedule[i]);
+    if (items.length >= 50) break;
+  }
+  if (!items.length) {
+    document.getElementById('fullsched').innerHTML = '<div class="empty"><div class="ei">📭</div><div>No schedule yet.<br>Go to Members → Rebuild Schedule</div></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    html += makeSchedRow(items[i], items[i].date === today);
+  }
+  document.getElementById('fullsched').innerHTML = html;
+}
+
+function renderMembers() {
+  var today = todayStr();
+  var html = '';
+  for (var mi = 0; mi < members.length; mi++) {
+    var m = members[mi];
+    var activeLeaves = [];
+    for (var li = 0; li < m.leaves.length; li++) {
+      if (m.leaves[li].to >= today) activeLeaves.push({lv: m.leaves[li], idx: li});
+    }
+    var onLeaveNow = isOnLeave(m, today);
+
+    var leavesHtml = '';
+    for (var li = 0; li < activeLeaves.length; li++) {
+      leavesHtml += '<div class="lentry">' +
+        '<span>' + fmtDate(activeLeaves[li].lv.from) + ' → ' + fmtDate(activeLeaves[li].lv.to) + '</span>' +
+        '<button class="btn br xs" onclick="removeLeave(' + m.id + ',' + activeLeaves[li].idx + ')">Remove</button>' +
+      '</div>';
+    }
+    if (!activeLeaves.length) leavesHtml = '<div class="nolv">No leaves set.</div>';
+
+    html += '<div class="mc">' +
+      '<div class="mct">' +
+        '<div class="mav ' + colorFor(m.id) + '">' + initials(m.name) + '</div>' +
+        '<div class="mif">' +
+          '<input class="mname" value="' + m.name.replace(/"/g,'&quot;') + '" ' +
+            'onblur="updateName(' + m.id + ',this.value)" ' +
+            'onkeydown="if(event.key===\'Enter\')this.blur()" placeholder="Name…"/>' +
+          '<div class="mmeta">' +
+            '<span>Duty: <strong>' + m.days + 'd</strong></span>' +
+            (onLeaveNow ? '<span class="ltag">🏖️ On Leave</span>' : '') +
+            (activeLeaves.length ? '<span class="ltag">' + activeLeaves.length + ' leave' + (activeLeaves.length > 1 ? 's' : '') + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="dc">' +
+          '<button class="db" onclick="changeDays(' + m.id + ',-1)">−</button>' +
+          '<span class="dv">' + m.days + '</span>' +
+          '<button class="db" onclick="changeDays(' + m.id + ',1)">+</button>' +
+        '</div>' +
+        '<button class="btn br xs" onclick="removeMember(' + m.id + ')" style="margin-left:6px">✕</button>' +
+      '</div>' +
+      '<div class="prow">' +
+        '<label>📱 Phone:</label>' +
+        '<input class="pinp" type="tel" value="' + (m.phone||'').replace(/"/g,'&quot;') + '" ' +
+          'placeholder="+91 9876543210" ' +
+          'onblur="updatePhone(' + m.id + ',this.value)" ' +
+          'onkeydown="if(event.key===\'Enter\')this.blur()"/>' +
+      '</div>' +
+      '<div class="phint">Include country code, e.g. +91 for India</div>' +
+      '<div class="lp">' +
+        '<h4>🏖️ Leave Dates</h4>' +
+        leavesHtml +
+        '<div class="lrow" style="margin-top:8px">' +
+          '<label>From:</label>' +
+          '<input type="date" class="dinp" id="lf' + m.id + '" min="' + today + '"/>' +
+          '<label>To:</label>' +
+          '<input type="date" class="dinp" id="lt' + m.id + '" min="' + today + '"/>' +
+          '<button class="btn bo xs" onclick="addLeave(' + m.id + ')">+ Add</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  document.getElementById('mgrid').innerHTML = html;
+}
+
+function renderHistory() {
+  var el = document.getElementById('hlist');
+  if (!history.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">📭</div><div>No history yet.<br>Mark collections on the Today tab!</div></div>';
+    return;
+  }
+  var html = '';
+  var shown = Math.min(history.length, 40);
+  for (var i = 0; i < shown; i++) {
+    var h = history[i];
+    html += '<div class="hitem">' +
+      '<div class="av ' + colorFor(h.memberId || 1) + '">' + initials(h.memberName) + '</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-weight:500;font-size:.88rem">' + h.memberName + '</div>' +
+        (h.at ? '<div style="font-size:.7rem;color:#8b949e">' + h.at + '</div>' : '') +
+      '</div>' +
+      '<div style="font-size:.72rem;color:#8b949e">' + fmtDate(h.date) + '</div>' +
+      '<div class="dot"></div>' +
+    '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function updateHeader() {
+  var d = new Date();
+  document.getElementById('hdrDate').textContent =
+    DAYS[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+// ── INIT ──────────────────────────────────────────────
+updateHeader();
+ensureSchedule();
+renderAll();
+</script>
+</body>
+</html>
